@@ -30,10 +30,11 @@ namespace HotelAPI.App.Controllers
 
         }
 
-        [HttpDelete("{id}")]
-        public void DeleteRegion(int id)
+        [HttpDelete("{value}")]
+        public IActionResult DeleteRegion(int value)
         {
-
+            _regionDbManager.DeleteRegion(value);
+            return Ok(value);
         }
 
         [HttpPost("recreate")]
