@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using HotelAPI.Data;
 using HotelAPI.Domain;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelAPI.App.Controllers
@@ -18,16 +14,14 @@ namespace HotelAPI.App.Controllers
         [HttpPost]
         public void AddRegion(Region region)
         {
-            //var temp = new Region();
-            //temp.Name = name;
-            //temp.Id = id;
             _regionDbManager.CreateRegion(region);
         }
 
         [HttpGet]
-        public void GetAllRegion()
+        public IActionResult GetAllRegions()
         {
-
+            return Ok(_regionDbManager.ReturnAllRegions());
+            
         }
 
         [HttpGet("{id}")]
@@ -36,7 +30,7 @@ namespace HotelAPI.App.Controllers
 
         }
 
-        [HttpDelete ("{id}")]
+        [HttpDelete("{id}")]
         public void DeleteRegion(int id)
         {
 
@@ -45,12 +39,13 @@ namespace HotelAPI.App.Controllers
         [HttpPost("recreate")]
         public void SeedDatabase()
         {
-
+            RecreateDatabase();
+            _regionDbManager.CreateRegion(ReturnBasicRegions());
         }
 
         public void RecreateDatabase()
         {
-            
+            _regionDbManager.RecreateDatabase();
         }
 
         public List<Region> ReturnBasicRegions()
@@ -59,19 +54,19 @@ namespace HotelAPI.App.Controllers
 
             regions.Add(new Region()
             {
-                Id = 50,
+                Value = 50,
                 Name = "Göteborg Centrum",
             });
 
             regions.Add(new Region()
             {
-                Id = 60,
-                Name = "Göteborg Centrum",
+                Value = 60,
+                Name = "Göteborg Hisingen",
             });
 
             regions.Add(new Region()
             {
-                Id = 70,
+                Value = 70,
                 Name = "Helsingborg",
             });
 

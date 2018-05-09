@@ -20,5 +20,22 @@ namespace HotelAPI.Data
             _context.Add(region);
             _context.SaveChanges();
         }
+
+        public void CreateRegion(List<Region> regionList)
+        {
+            _context.AddRange(regionList);
+            _context.SaveChanges();
+        }
+
+        public List<Region> ReturnAllRegions()
+        {
+            return _context.Regions.ToList();
+        }
+
+        public void RecreateDatabase()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+        }
     }
 }
