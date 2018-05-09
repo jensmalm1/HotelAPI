@@ -2,34 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HotelAPI.Data;
+using HotelAPI.Domain;
 
 namespace HotelAPI.App
 {
     public class Validation
     {
+        private readonly RegionDbManager _regionDbManager = new RegionDbManager();
 
-        public static bool ValidateId(string id)
+        public bool CorrectValue(int value)
         {
-            if (!String.IsNullOrWhiteSpace(id))
-            {
-                int num;
-
-                if (int.TryParse(id, out num))
-
-                    return true;
-            }
-
-            return false;
-
+            return value != 0;
         }
 
-        public static bool ValidateName(string name)
+        public bool CorrectName(string name)
         {
-            if (!String.IsNullOrWhiteSpace(name))
+            return !String.IsNullOrWhiteSpace(name);
+        }
 
-                return true;
+        public bool RegionExists(int value)
+        {
+            var list = _regionDbManager.ReturnAllRegions().Where(x=>x.Value == value);
+            return list.Count() != 0;
+        }
 
-            return false;
+        public bool IsValidRegion(Region region)
+        {
+            return CorrectValue(region.Value) && CorrectName(region.Name);
         }
 
     }

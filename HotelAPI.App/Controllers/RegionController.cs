@@ -2,6 +2,7 @@
 using HotelAPI.Data;
 using HotelAPI.Domain;
 using Microsoft.AspNetCore.Mvc;
+using static HotelAPI.App.Validation;
 
 namespace HotelAPI.App.Controllers
 {
@@ -10,17 +11,16 @@ namespace HotelAPI.App.Controllers
     public class RegionController : Controller
     {
         private readonly RegionDbManager _regionDbManager = new RegionDbManager();
+        private readonly Validation _validation = new Validation();
 
         [HttpPost]
         public IActionResult AddRegion(Region region)
         {
-            string id = region.Id.ToString();
-            if (Validation.ValidateId(id)&&Validation.ValidateName(region.Name))
+            if (_validation.IsValidRegion(region))
             {
                 _regionDbManager.CreateRegion(region);
                 return Ok();
             }
-
             return BadRequest("Fel.");
         }
 
@@ -41,8 +41,13 @@ namespace HotelAPI.App.Controllers
         [HttpDelete("{value}")]
         public IActionResult DeleteRegion(int value)
         {
-            _regionDbManager.DeleteRegion(value);
-            return Ok(value);
+
+            if (_validation.RegionExists(value))
+            {
+                _regionDbManager.DeleteRegion(value);
+                return Ok();
+            }
+            return NotFound("There is no region with that value");
         }
 
         [HttpPost("recreate")]
