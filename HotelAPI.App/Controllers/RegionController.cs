@@ -49,7 +49,7 @@ namespace HotelAPI.App.Controllers
             _regionDbManager.RecreateDatabase();
         }
 
-        public List<Region> ReturnBasicRegions()
+        private List<Region> ReturnBasicRegions()
         {
             var regions = new List<Region>();
 

@@ -19,6 +19,6 @@ namespace HotelAPI.Data
         {
             optionsBuilder.UseSqlServer(
                 "Server = (localdb)\\mssqllocaldb; Database = EfHotelApi; Trusted_Connection = True; ");
-        }
+            }
     }
 }

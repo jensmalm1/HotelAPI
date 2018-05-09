@@ -40,8 +40,10 @@ namespace HotelAPI.Data
 
         public void DeleteRegion(int removeValue)
         {
-            _context.Regions.ToList().RemoveAll(x => x.Value == removeValue);
-                _context.SaveChanges();
+            var region = _context.Regions.Single(x => x.Value == removeValue);
+
+            _context.Regions.Remove(region);
+            _context.SaveChanges();
         }
     }
 }
