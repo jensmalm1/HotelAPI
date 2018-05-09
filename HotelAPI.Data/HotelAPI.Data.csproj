@@ -5,14 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HotelAPI.App\HotelAPI.App.csproj" />
-    <ProjectReference Include="..\HotelAPI.Domain\HotelAPI.Domain.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.EntityFrameworkCore">
-      <HintPath>..\..\..\Users\Administrator\.nuget\packages\microsoft.entityframeworkcore\2.0.2\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\HotelAPI.Domain\HotelAPI.Domain.csproj" />
   </ItemGroup>
 
 </Project>
