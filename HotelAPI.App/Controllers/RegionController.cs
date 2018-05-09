@@ -12,16 +12,24 @@ namespace HotelAPI.App.Controllers
         private readonly RegionDbManager _regionDbManager = new RegionDbManager();
 
         [HttpPost]
-        public void AddRegion(Region region)
+        public IActionResult AddRegion(Region region)
         {
-            _regionDbManager.CreateRegion(region);
+            string id = region.Id.ToString();
+            if (Validation.ValidateId(id)&&Validation.ValidateName(region.Name))
+            {
+                _regionDbManager.CreateRegion(region);
+                return Ok();
+            }
+
+            return BadRequest("Fel.");
         }
+
 
         [HttpGet]
         public IActionResult GetAllRegions()
         {
             return Ok(_regionDbManager.ReturnAllRegions());
-            
+
         }
 
         [HttpGet("{id}")]
