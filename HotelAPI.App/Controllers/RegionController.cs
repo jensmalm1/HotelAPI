@@ -10,8 +10,17 @@ namespace HotelAPI.App.Controllers
     [Route("api/Region")]
     public class RegionController : Controller
     {
-        private readonly RegionDbManager _regionDbManager = new RegionDbManager();
-        private readonly Validation _validation = new Validation();
+
+        private readonly RegionDbManager _regionDbManager;
+        private readonly Validation _validation;
+
+        public RegionController(HotelContext hotelContext)
+        {
+            _regionDbManager = new RegionDbManager(hotelContext);
+            _validation = new Validation(_regionDbManager);
+            _regionDbManager.EnsureDatabaseCreated();
+        }
+
 
         [HttpPost]
         public IActionResult AddRegion(Region region)

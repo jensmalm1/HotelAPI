@@ -9,7 +9,12 @@ namespace HotelAPI.App
 {
     public class Validation
     {
-        private readonly RegionDbManager _regionDbManager = new RegionDbManager();
+        public Validation(RegionDbManager regionDbManager)
+        {
+            _regionDbManager = regionDbManager;
+        }
+
+        private readonly RegionDbManager _regionDbManager;
 
         public bool CorrectValue(int value)
         {

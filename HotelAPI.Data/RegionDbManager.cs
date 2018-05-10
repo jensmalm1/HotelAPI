@@ -9,7 +9,12 @@ namespace HotelAPI.Data
 {
     public class RegionDbManager : IDisposable
     {
-        private readonly HotelContext _context = new HotelContext();
+        private readonly HotelContext _context;
+
+        public RegionDbManager(HotelContext context)
+        {
+            _context = context;
+        }
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -35,6 +40,11 @@ namespace HotelAPI.Data
         public void RecreateDatabase()
         {
             _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+        }
+
+        public void EnsureDatabaseCreated()
+        {
             _context.Database.EnsureCreated();
         }
 
