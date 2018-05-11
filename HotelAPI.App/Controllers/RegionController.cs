@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using HotelAPI.Data;
 using HotelAPI.Domain;
 using Microsoft.AspNetCore.Mvc;
 using static HotelAPI.App.Validation;
+using System.Text.RegularExpressions;
 
 namespace HotelAPI.App.Controllers
 {
@@ -30,6 +34,7 @@ namespace HotelAPI.App.Controllers
                 _regionDbManager.CreateRegion(region);
                 return Ok();
             }
+            
             return BadRequest("Fel.");
         }
 
@@ -57,6 +62,41 @@ namespace HotelAPI.App.Controllers
                 return Ok();
             }
             return NotFound("There is no region with that value");
+        }
+
+        [HttpPost("getfromfile")]
+        public IActionResult AddFromFile()
+        {
+            var hotels = new List<Hotel>();
+
+            var regions = _regionDbManager.ReturnAllRegions();
+            
+            var date = DateTime.Now;
+            var year = date.Year;
+            var month = date.Month;
+            var day = date.Day;
+            var input = System.IO.File.ReadAllText($"Scandic-{year}-{month}-{day}.txt").Split('\n').ToList();
+
+            foreach (var line in input)
+            {
+                var hotel = new Hotel();
+                var test = line.Split(',');
+
+                var regionId = Convert.ToInt32(test[0]);
+                hotel.Name = test[1];
+                hotel.Rooms = Convert.ToInt32(test[2]);
+                hotels.Add(hotel);
+                foreach (var region in regions)
+                {
+                    if (regionId== region.Value)
+                    {
+                        region.Hotels.Add(hotel);
+                    }
+                }            
+            }
+            _regionDbManager.RecreateDatabase();
+            _regionDbManager.CreateRegion(regions);
+            return Ok();
         }
 
         [HttpPost("recreate")]

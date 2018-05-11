@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace HotelAPI.Domain
@@ -11,6 +12,7 @@ namespace HotelAPI.Domain
         [Required]
         public string Name { get; set; }
         public int Value { get; set; }
+        public List <Hotel> Hotels { get; set; }
 
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HotelAPI.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelAPI.Data
 {
@@ -34,7 +35,7 @@ namespace HotelAPI.Data
 
         public List<Region> ReturnAllRegions()
         {
-            return _context.Regions.ToList();
+            return _context.Regions.Include(a=>a.Hotels).ToList();
         }
 
         public void RecreateDatabase()
