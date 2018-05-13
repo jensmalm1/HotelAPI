@@ -11,7 +11,7 @@ using System;
 namespace HotelAPI.Data.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20180509082804_init")]
+    [Migration("20180511145254_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,18 +21,44 @@ namespace HotelAPI.Data.Migrations
                 .HasAnnotation("ProductVersion", "2.0.3-rtm-10026")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("HotelAPI.Domain.Region", b =>
+            modelBuilder.Entity("HotelAPI.Domain.Hotel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
 
+                    b.Property<int?>("RegionId");
+
+                    b.Property<int>("Rooms");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RegionId");
+
+                    b.ToTable("Hotel");
+                });
+
+            modelBuilder.Entity("HotelAPI.Domain.Region", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
                     b.Property<int>("Value");
 
                     b.HasKey("Id");
 
                     b.ToTable("Regions");
+                });
+
+            modelBuilder.Entity("HotelAPI.Domain.Hotel", b =>
+                {
+                    b.HasOne("HotelAPI.Domain.Region")
+                        .WithMany("Hotels")
+                        .HasForeignKey("RegionId");
                 });
 #pragma warning restore 612, 618
         }

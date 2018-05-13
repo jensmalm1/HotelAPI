@@ -73,8 +73,8 @@ namespace HotelAPI.App.Controllers
             
             var date = DateTime.Now;
             var year = date.Year;
-            var month = date.Month;
-            var day = date.Day;
+            var month = date.Month.ToString("D2");            
+            var day = date.Day.ToString("D2");
             var input = System.IO.File.ReadAllText($"Scandic-{year}-{month}-{day}.txt").Split('\n').ToList();
 
             foreach (var line in input)
@@ -86,16 +86,16 @@ namespace HotelAPI.App.Controllers
                 hotel.Name = test[1];
                 hotel.Rooms = Convert.ToInt32(test[2]);
                 hotels.Add(hotel);
+                    
                 foreach (var region in regions)
                 {
-                    if (regionId== region.Value)
+                    if (regionId==region.Value)
                     {
                         region.Hotels.Add(hotel);
                     }
                 }            
             }
-            _regionDbManager.RecreateDatabase();
-            _regionDbManager.CreateRegion(regions);
+            _regionDbManager.UpdateRegion(regions);
             return Ok();
         }
 

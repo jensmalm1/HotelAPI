@@ -33,6 +33,12 @@ namespace HotelAPI.Data
             _context.SaveChanges();
         }
 
+        public void UpdateRegion(List<Region> regionList)
+        {
+            _context.UpdateRange(regionList);
+            _context.SaveChanges();
+        }
+
         public List<Region> ReturnAllRegions()
         {
             return _context.Regions.Include(a=>a.Hotels).ToList();
