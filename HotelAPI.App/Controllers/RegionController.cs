@@ -22,6 +22,15 @@ namespace HotelAPI.App.Controllers
             _regionDbManager.EnsureDatabaseCreated();
         }
 
+        [HttpPost("AddTest")]
+        public IActionResult AddRegionTest(string name, int value)
+        {
+            var region = new Region();
+            region.Name = name;
+            region.Value = value;
+            _regionDbManager.CreateRegion(region);
+            return Ok(region);
+        }
 
         [HttpPost]
         public IActionResult AddRegion(Region region)
@@ -35,6 +44,18 @@ namespace HotelAPI.App.Controllers
             return BadRequest("Fel.");
         }
 
+        [HttpGet("count")]
+        public IActionResult CountRegions()
+        {
+            var count = _regionDbManager.ReturnAllRegions().Count();
+            return Ok(count);
+        }
+
+        [HttpGet("test")]
+        public IActionResult Test()
+        {
+            return Ok("Hejsan");
+        }
 
         [HttpGet]
         public IActionResult GetAllRegions()
@@ -68,8 +89,19 @@ namespace HotelAPI.App.Controllers
 
             var regions = _regionDbManager.ReturnAllRegions();
 
-            var files = System.IO.Directory.GetFiles(@"C:\Project\HotelAPI\HotelAPI.App", "*.txt").OrderByDescending(x=>x).ToList();
-            
+            var files = new List<string>();
+ 
+            try
+            {
+                files = System.IO.Directory.GetFiles(@"D:\home\site\wwwroot", "*.txt").OrderByDescending(x => x).ToList();
+            }
+
+            catch
+            {
+                files = System.IO.Directory.GetFiles(@"C:\project\HotelApi\HotelAPI.App", "*.txt").OrderByDescending(x => x).ToList();
+            }
+
+
             var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
 
             foreach (var line in input)
