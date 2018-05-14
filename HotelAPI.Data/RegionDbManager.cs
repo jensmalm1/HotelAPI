@@ -44,6 +44,11 @@ namespace HotelAPI.Data
             return _context.Regions.Include(a=>a.Hotels).ToList();
         }
 
+        public List<Region> ReturnSpecificRegion(int regionValue)
+        {
+            return _context.Regions.Include(a => a.Hotels).Where(x=>x.Value == regionValue).ToList();
+        }
+
         public void RecreateDatabase()
         {
             _context.Database.EnsureDeleted();

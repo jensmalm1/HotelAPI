@@ -61,11 +61,9 @@ namespace HotelAPI.App.Controllers
             return NotFound("There is no region with that value");
         }
 
-        [HttpGet("GetFromTextFile")]
-        public IActionResult AddFromFile()
+        [HttpGet("Hotels")]
+        public IActionResult GetAllHotels()
         {
-            //Todo: fläta ihop hotellen med regionen -- läsa från textfil.
-
             var hotels = new List<Hotel>();
 
             var regions = _regionDbManager.ReturnAllRegions();
@@ -87,6 +85,47 @@ namespace HotelAPI.App.Controllers
                 foreach (var region in regions)
                 {
                     if (regionId == region.Value)
+                    {
+                        region.Hotels.Add(hotel);
+                    }
+                }
+            }
+
+            return Ok(regions);
+        }
+
+        [HttpGet("{regionValue:int}")]
+        public IActionResult GetAllHotelsInRegion(int regionValue)
+        {
+            const string path = @"C:\Project\HotelAPI\HotelAPI.App";
+
+            var hotels = new List<Hotel>();
+
+            var regions = _regionDbManager.ReturnSpecificRegion(regionValue);
+
+            var files = System.IO.Directory.GetFiles(path, "*.txt").OrderByDescending(x => x).ToList();
+
+            var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
+
+            foreach (var line in input)
+            {
+                var hotel = new Hotel();
+                var test = line.Split(',');
+
+                var regionId = Convert.ToInt32(test[0]);
+                if (regionId != regionValue)
+                    continue;
+
+                hotel.Name = test[1];
+                hotel.Rooms = Convert.ToInt32(test[2]);
+                if (regionValue == regionId)
+                {
+                    hotels.Add(hotel);
+                }
+
+                foreach (var region in regions)
+                {
+                    if (regionValue == region.Value)
                     {
                         region.Hotels.Add(hotel);
                     }
