@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using HotelAPI.Data;
 using HotelAPI.Domain;
 using Microsoft.AspNetCore.Mvc;
-using static HotelAPI.App.Validation;
-using System.Text.RegularExpressions;
 
 namespace HotelAPI.App.Controllers
 {
@@ -34,7 +31,7 @@ namespace HotelAPI.App.Controllers
                 _regionDbManager.CreateRegion(region);
                 return Ok();
             }
-            
+
             return BadRequest("Fel.");
         }
 
@@ -64,18 +61,19 @@ namespace HotelAPI.App.Controllers
             return NotFound("There is no region with that value");
         }
 
-        [HttpPost("getfromfile")]
-        public IActionResult AddFromFile()
+        [HttpPost("GetFromTextFile")]
+        public IActionResult AddFromFile(string path)
         {
             var hotels = new List<Hotel>();
 
             var regions = _regionDbManager.ReturnAllRegions();
+
+            var files = System.IO.Directory.GetFiles(@"C:\Project\HotelAPI\HotelAPI.App", "*.txt").OrderByDescending(x=>x).ToList();
             
-            var date = DateTime.Now;
-            var year = date.Year;
-            var month = date.Month.ToString("D2");            
-            var day = date.Day.ToString("D2");
-            var input = System.IO.File.ReadAllText($"Scandic-{year}-{month}-{day}.txt").Split('\n').ToList();
+
+
+
+            var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
 
             foreach (var line in input)
             {
@@ -86,14 +84,14 @@ namespace HotelAPI.App.Controllers
                 hotel.Name = test[1];
                 hotel.Rooms = Convert.ToInt32(test[2]);
                 hotels.Add(hotel);
-                    
+
                 foreach (var region in regions)
                 {
-                    if (regionId==region.Value)
+                    if (regionId == region.Value)
                     {
                         region.Hotels.Add(hotel);
                     }
-                }            
+                }
             }
             _regionDbManager.UpdateRegion(regions);
             return Ok();
