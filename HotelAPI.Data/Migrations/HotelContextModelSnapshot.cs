@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
 
 namespace HotelAPI.Data.Migrations
@@ -28,6 +26,8 @@ namespace HotelAPI.Data.Migrations
                     b.Property<string>("Name");
 
                     b.Property<int?>("RegionId");
+
+                    b.Property<int>("RegionValue");
 
                     b.Property<int>("Rooms");
 

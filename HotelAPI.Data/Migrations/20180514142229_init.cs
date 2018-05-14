@@ -31,6 +31,7 @@ namespace HotelAPI.Data.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
                     RegionId = table.Column<int>(nullable: true),
+                    RegionValue = table.Column<int>(nullable: false),
                     Rooms = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

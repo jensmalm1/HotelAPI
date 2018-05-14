@@ -11,7 +11,7 @@ using System;
 namespace HotelAPI.Data.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20180511145254_init")]
+    [Migration("20180514142229_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,6 +29,8 @@ namespace HotelAPI.Data.Migrations
                     b.Property<string>("Name");
 
                     b.Property<int?>("RegionId");
+
+                    b.Property<int>("RegionValue");
 
                     b.Property<int>("Rooms");
 

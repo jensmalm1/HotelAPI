@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace HotelAPI.Domain
 {
@@ -10,8 +11,10 @@ namespace HotelAPI.Domain
     {
         public int Id { get; set; }
         public string Name { get; set; }
+
         public int Rooms { get; set; }
 
-        
+        public int RegionValue { get; set; }
+
     }
 }
