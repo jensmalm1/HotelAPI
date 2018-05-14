@@ -86,17 +86,27 @@ namespace HotelAPI.App.Controllers
         [HttpGet("Hotels")]
         public IActionResult GetAllHotels()
         {
-            var hotels = new List<Hotel>();
 
             var regions = _regionDbManager.ReturnAllRegions();
 
-            var files = new List<string>();
+            var scandicHotels = new List<string>();
+            var bestWesternHotels = new List<string>();
 
-            files = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
+            scandicHotels = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
+            bestWesternHotels = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
 
-            var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
+            var scandicTextFile = System.IO.File.ReadAllText($"{scandicHotels[0]}").Split('\n').ToList();
 
-            foreach (var line in input)
+            var hotels = new List<Hotel>();
+            ReadHotelsFromStringList(hotels, regions, scandicTextFile);
+            ReadHotelsFromStringList(hotels, regions, bestWesternHotels);
+
+            return Ok(regions);
+        }
+
+        private static void ReadHotelsFromStringList(List<Hotel> hotels, List<Region> regions, List<string> scandicTextFile)
+        {
+            foreach (var line in scandicTextFile)
             {
                 var hotel = new Hotel();
                 var test = line.Split(',');
@@ -114,8 +124,6 @@ namespace HotelAPI.App.Controllers
                     }
                 }
             }
-
-            return Ok(regions);
         }
 
         [HttpGet("{regionValue:int}")]
