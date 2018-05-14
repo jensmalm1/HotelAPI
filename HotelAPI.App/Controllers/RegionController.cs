@@ -11,15 +11,16 @@ namespace HotelAPI.App.Controllers
     [Route("api/Region")]
     public class RegionController : Controller
     {
-
+        private readonly AppConfiguration _appConfiguration;
         private readonly RegionDbManager _regionDbManager;
         private readonly Validation _validation;
 
-        public RegionController(HotelContext hotelContext)
+        public RegionController(HotelContext hotelContext, AppConfiguration appConfiguration)
         {
             _regionDbManager = new RegionDbManager(hotelContext);
             _validation = new Validation(_regionDbManager);
             _regionDbManager.EnsureDatabaseCreated();
+            _appConfiguration = appConfiguration;
         }
 
         [HttpPost("AddTest")]
@@ -90,17 +91,8 @@ namespace HotelAPI.App.Controllers
             var regions = _regionDbManager.ReturnAllRegions();
 
             var files = new List<string>();
- 
-            try
-            {
-                files = System.IO.Directory.GetFiles(@"D:\home\site\wwwroot", "*.txt").OrderByDescending(x => x).ToList();
-            }
 
-            catch
-            {
-                files = System.IO.Directory.GetFiles(@"C:\project\HotelApi\HotelAPI.App", "*.txt").OrderByDescending(x => x).ToList();
-            }
-
+            files = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
 
             var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
 
