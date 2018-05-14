@@ -61,18 +61,17 @@ namespace HotelAPI.App.Controllers
             return NotFound("There is no region with that value");
         }
 
-        [HttpPost("GetFromTextFile")]
-        public IActionResult AddFromFile(string path)
+        [HttpGet("GetFromTextFile")]
+        public IActionResult AddFromFile()
         {
+            //Todo: fläta ihop hotellen med regionen -- läsa från textfil.
+
             var hotels = new List<Hotel>();
 
             var regions = _regionDbManager.ReturnAllRegions();
 
             var files = System.IO.Directory.GetFiles(@"C:\Project\HotelAPI\HotelAPI.App", "*.txt").OrderByDescending(x=>x).ToList();
             
-
-
-
             var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
 
             foreach (var line in input)
@@ -93,8 +92,8 @@ namespace HotelAPI.App.Controllers
                     }
                 }
             }
-            _regionDbManager.UpdateRegion(regions);
-            return Ok();
+
+            return Ok(regions);
         }
 
         [HttpPost("recreate")]
