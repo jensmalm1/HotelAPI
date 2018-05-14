@@ -12,7 +12,6 @@ namespace HotelAPI.Domain
 
         [Required]
         public string Name { get; set; }
-
         public int Value { get; set; }
         public List <Hotel> Hotels { get; set; }
 

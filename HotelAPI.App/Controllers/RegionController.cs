@@ -97,23 +97,19 @@ namespace HotelAPI.App.Controllers
             var scandicHotels = new List<string>();
 
             scandicHotels = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
+            var bestWesternHotel = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
 
             var scandicTextFile = System.IO.File.ReadAllText($"{scandicHotels[0]}").Split('\n').ToList();
 
             var hotels = new List<Hotel>();
             ReadHotelsFromStringList(hotels, regions, scandicTextFile);
-            regions.AddRange(LoadJson());
+            LoadJson(regions, bestWesternHotel);
             return Ok(regions);
         }
 
-        public List<Region> LoadJson()
+        private static void LoadJson(List<Region> regions, List<string> listOfWesternHotels)
         {
-
-            var regions = _regionDbManager.ReturnAllRegions();
-
-            var bestWesternHotel = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
-
-            using (StreamReader fi = System.IO.File.OpenText(bestWesternHotel[0]))
+            using (StreamReader fi = System.IO.File.OpenText(listOfWesternHotels[0]))
             {
                 var fileContent = fi.ReadToEnd();
 
@@ -121,33 +117,10 @@ namespace HotelAPI.App.Controllers
 
                 foreach (var hotel in list)
                 {
-                    var region = regions.SingleOrDefault(r => r.Id == hotel.RegionValue);
-                    region.Hotels.Add(hotel);
+                    var region = regions.SingleOrDefault(r => r.Value == hotel.RegionValue);
+                    region?.Hotels.Add(hotel);
                 }
             }
-
-            return regions;
-
-
-
-            //var d = new DirectoryInfo(_appConfiguration.ImportPath);
-
-            //foreach (var file in d.GetFiles("*.json"))
-            //{
-
-            //}
-
-            //var bestWesternHotels = new List<string>();
-            //bestWesternHotel = Directory.GetFileName(_appConfiguration.ImportPath).OrderByDescending(x => x).ToList();
-
-
-            //using (StreamReader r = new StreamReader($"{_appConfiguration.ImportPath}\\.json"))
-            //{
-            //    string json = r.ReadToEnd();
-            //    regions = JsonConvert.DeserializeObject<List<Region>>(json);
-            //}
-
-            //return regions;
         }
 
         private static void ReadHotelsFromStringList(List<Hotel> hotels, List<Region> regions, List<string> scandicTextFile)

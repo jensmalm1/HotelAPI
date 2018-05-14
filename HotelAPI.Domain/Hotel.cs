@@ -12,8 +12,10 @@ namespace HotelAPI.Domain
         public int Id { get; set; }
         public string Name { get; set; }
 
+        [JsonProperty(PropertyName = "LedigaRum")]
         public int Rooms { get; set; }
 
+        [JsonProperty(PropertyName = "Reg")]
         public int RegionValue { get; set; }
 
     }
