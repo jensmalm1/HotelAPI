@@ -8,17 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelAPI.Data
 {
-    public class RegionDbManager : IDisposable
+    public class RegionDbManager 
     {
         private readonly HotelContext _context;
 
         public RegionDbManager(HotelContext context)
         {
             _context = context;
-        }
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
 
         public void CreateRegion(Region region)
