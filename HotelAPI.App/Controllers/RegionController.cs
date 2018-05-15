@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using HotelAPI.Data;
 using HotelAPI.Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace HotelAPI.App.Controllers
@@ -69,11 +66,10 @@ namespace HotelAPI.App.Controllers
 
             var hotels = new List<Hotel>();
 
-            ReadHotelsFromStringList(hotels, regions, scandicTextFile);
-            var westernHotels = ReadHotelsFromJson(regions, bestWesternHotels);
+            ReadHotelsFromStringList(hotels, scandicTextFile);
+            ReadHotelsFromJson(hotels, bestWesternHotels);
 
-            AddHotelToCorrespondingRegion(regions, westernHotels);
-            AddHotelToCorrespondingRegion_BasedOnRegion(regions, hotels);
+            AddHotelToCorrespondingRegion(regions, hotels);
             return Ok(regions);
         }
 
@@ -87,14 +83,14 @@ namespace HotelAPI.App.Controllers
             Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
 
 
-        private List<Hotel> ReadHotelsFromJson(List<Region> regions, List<string> jsonList)
+        private void ReadHotelsFromJson(List<Hotel> hotels, List<string> jsonList)
         {
             using (StreamReader fi = System.IO.File.OpenText(jsonList[0]))
             {
                 var fileContent = fi.ReadToEnd();
+                var hotelsFromJson = JArray.Parse(fileContent).ToObject<List<Hotel>>().ToList();
 
-                var hotels = JArray.Parse(fileContent).ToObject<List<Hotel>>();
-                return hotels;
+                hotels.AddRange(hotelsFromJson);
             }
         }
 
@@ -106,8 +102,14 @@ namespace HotelAPI.App.Controllers
                 region?.Hotels.Add(hotel);
             }
         }
+        private static void AddHotelToCorrespondingRegion(List<Region> regions, Hotel hotel)
+        {
+            var region = regions.SingleOrDefault(r => r.Value == hotel.RegionValue);
+            region?.Hotels.Add(hotel);
+        }
 
-        private static void ReadHotelsFromStringList(List<Hotel> hotels, List<Region> regions, List<string> scandicTextFile)
+
+        private static void ReadHotelsFromStringList(List<Hotel> hotels, List<string> scandicTextFile)
         {
             foreach (var line in scandicTextFile)
             {
@@ -121,60 +123,44 @@ namespace HotelAPI.App.Controllers
             }
         }
 
-        private static void AddHotelToCorrespondingRegion_BasedOnRegion(List<Region> regions, List <Hotel> hotels)
+        private static void AddHotelToCorrespondingRegion_BasedOnRegion(List<Region> regions, List<Hotel> hotels)
         {
             foreach (var region in regions)
             {
                 foreach (var hotel in hotels)
 
-                if (hotel.RegionValue == region.Value)
-                {
-                    region.Hotels.Add(hotel);
-                }
+                    if (hotel.RegionValue == region.Value)
+                    {
+                        region.Hotels.Add(hotel);
+                    }
             }
-        }
-
-        private static void ReadHotelsFromJson(string jsonString)
-        {
-            dynamic result = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
         }
 
         [HttpGet("{regionValue:int}")]
         public IActionResult GetAllHotelsInRegion(int regionValue)
         {
-            const string path = @"C:\Project\HotelAPI\HotelAPI.App";
+
+            var regions = _regionDbManager.ReturnAllRegions();
+
+            var scandicHotels = SortTextFilesByDate();
+            var bestWesternHotels = SortJsonFilesByDate();
+
+            var scandicTextFile = SplitStringByLines(scandicHotels[0]);
 
             var hotels = new List<Hotel>();
 
-            var regions = _regionDbManager.ReturnSpecificRegion(regionValue);
+            ReadHotelsFromStringList(hotels, scandicTextFile);
+            ReadHotelsFromJson(hotels, bestWesternHotels);
 
-            var files = System.IO.Directory.GetFiles(path, "*.txt").OrderByDescending(x => x).ToList();
-
-            var input = System.IO.File.ReadAllText($"{files[0]}").Split('\n').ToList();
-
-            foreach (var line in input)
+            foreach (var hotel in hotels)
             {
-                var hotel = new Hotel();
-                var test = line.Split(',');
-
-                var regionId = Convert.ToInt32(test[0]);
-                if (regionId != regionValue)
+                if (hotel.RegionValue != regionValue)
+                {
+                    regions.RemoveAll(x => x.Value == hotel.RegionValue);
                     continue;
-
-                hotel.Name = test[1];
-                hotel.Rooms = Convert.ToInt32(test[2]);
-                if (regionValue == regionId)
-                {
-                    hotels.Add(hotel);
                 }
 
-                foreach (var region in regions)
-                {
-                    if (regionValue == region.Value)
-                    {
-                        region.Hotels.Add(hotel);
-                    }
-                }
+                AddHotelToCorrespondingRegion(regions, hotel);
             }
 
             return Ok(regions);
