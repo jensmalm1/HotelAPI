@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
 namespace HotelAPI.Domain
@@ -13,7 +14,8 @@ namespace HotelAPI.Domain
         [Required]
         public string Name { get; set; }
         public int Value { get; set; }
-        public List <Hotel> Hotels { get; set; }
+        [NotMapped] public List<Hotel> Hotels { get; set; } = new List<Hotel>();
+
 
     }
 }

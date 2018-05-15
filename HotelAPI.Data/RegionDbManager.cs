@@ -41,12 +41,12 @@ namespace HotelAPI.Data
 
         public List<Region> ReturnAllRegions()
         {
-            return _context.Regions.Include(a=>a.Hotels).ToList();
+            return _context.Regions.ToList();
         }
 
         public List<Region> ReturnSpecificRegion(int regionValue)
         {
-            return _context.Regions.Include(a => a.Hotels).Where(x=>x.Value == regionValue).ToList();
+            return _context.Regions.Where(x => x.Value == regionValue).ToList();
         }
 
         public void RecreateDatabase()

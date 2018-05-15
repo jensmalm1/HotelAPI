@@ -130,14 +130,14 @@ namespace HotelAPI.App.Controllers
                 var hotel = new Hotel();
                 var test = line.Split(',');
 
-                var regionId = Convert.ToInt32(test[0]);
+                hotel.RegionValue= Convert.ToInt32(test[0]);
                 hotel.Name = test[1];
                 hotel.Rooms = Convert.ToInt32(test[2]);
                 hotels.Add(hotel);
 
                 foreach (var region in regions)
                 {
-                    if (regionId == region.Value)
+                    if (hotel.RegionValue == region.Value)
                     {
                         region.Hotels.Add(hotel);
                     }
