@@ -65,7 +65,7 @@ namespace HotelAPI.App.Controllers
 
             var scandic = System.IO.File.ReadAllText(scandicHotels[0]);
             var western = System.IO.File.ReadAllText(bestWesternHotels[0]);
-            
+
             var hotels = new List<Hotel>();
 
             _hotelAdder.AddScandicHotelsToHotelList(hotels, scandic);
@@ -104,12 +104,13 @@ namespace HotelAPI.App.Controllers
             var scandicHotels = _parser.SortTextFilesByDate();
             var bestWesternHotels = _parser.SortJsonFilesByDate();
 
-            var scandicTextFile = _parser.SplitStringByLines(scandicHotels[0]);
+            var scandic = System.IO.File.ReadAllText(scandicHotels[0]);
+            var western = System.IO.File.ReadAllText(bestWesternHotels[0]);
 
             var hotels = new List<Hotel>();
 
-            _hotelAdder.AddScandicHotelsToHotelList(hotels, scandicTextFile[0]);
-            _hotelAdder.AddWesternHotelsToHotelList(hotels, bestWesternHotels[0]);
+            _hotelAdder.AddScandicHotelsToHotelList(hotels, scandic);
+            _hotelAdder.AddWesternHotelsToHotelList(hotels, western);
 
             foreach (var hotel in hotels)
             {
@@ -121,7 +122,6 @@ namespace HotelAPI.App.Controllers
 
                 AddHotelToCorrespondingRegion(regions, hotel);
             }
-
             return Ok(regions);
         }
 
