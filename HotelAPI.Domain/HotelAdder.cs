@@ -10,9 +10,10 @@ namespace HotelAPI.Domain
 {
     public class HotelAdder
     {
-        public static void AddScandicHotelsToHotelList(List<Hotel> hotels, List<string> scandicTextFile)
+        public static void AddScandicHotelsToHotelList(List<Hotel> hotels, string scandicTextFile)
         {
-            foreach (var line in scandicTextFile)
+        
+            foreach (var line in scandicTextFile.Split('\n'))
             {
                 var hotel = new Hotel();
                 var test = line.Split(',');
@@ -24,15 +25,10 @@ namespace HotelAPI.Domain
             }
         }
 
-        public static void AddWesternHotelsToHotelList(List<Hotel> hotels, List<string> jsonList)
+        public static void AddWesternHotelsToHotelList(List<Hotel> hotels, string westernJsonFile)
         {
-            using (StreamReader fi = System.IO.File.OpenText(jsonList[0]))
-            {
-                var fileContent = fi.ReadToEnd();
-                var hotelsFromJson = JArray.Parse(fileContent).ToObject<List<Hotel>>().ToList();
-
-                hotels.AddRange(hotelsFromJson);
-            }
+            var hotelsFromJson = JArray.Parse(westernJsonFile).ToObject<List<Hotel>>().ToList();
+            hotels.AddRange(hotelsFromJson);
         }
     }
 }
