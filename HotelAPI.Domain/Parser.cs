@@ -13,7 +13,7 @@ namespace HotelAPI.Domain
 
         public Parser(AppConfiguration appConfiguration)
         {
-            _appConfiguration = new AppConfiguration();
+            _appConfiguration = appConfiguration;
 
         }
 

@@ -10,7 +10,7 @@ namespace HotelAPI.Domain
 {
     public class HotelAdder
     {
-        public static void AddScandicHotelsToHotelList(List<Hotel> hotels, string scandicTextFile)
+        public void AddScandicHotelsToHotelList(List<Hotel> hotels, string scandicTextFile)
         {
         
             foreach (var line in scandicTextFile.Split('\n'))
@@ -25,7 +25,7 @@ namespace HotelAPI.Domain
             }
         }
 
-        public static void AddWesternHotelsToHotelList(List<Hotel> hotels, string westernJsonFile)
+        public void AddWesternHotelsToHotelList(List<Hotel> hotels, string westernJsonFile)
         {
             var hotelsFromJson = JArray.Parse(westernJsonFile).ToObject<List<Hotel>>().ToList();
             hotels.AddRange(hotelsFromJson);

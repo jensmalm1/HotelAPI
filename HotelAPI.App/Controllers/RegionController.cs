@@ -16,6 +16,7 @@ namespace HotelAPI.App.Controllers
         private readonly RegionDbManager _regionDbManager;
         private readonly Validation _validation;
         private readonly Parser _parser;
+        private readonly HotelAdder _hotelAdder;
 
         public RegionController(HotelContext hotelContext, AppConfiguration appConfiguration)
         {
@@ -23,6 +24,7 @@ namespace HotelAPI.App.Controllers
             _regionDbManager = new RegionDbManager(hotelContext);
             _validation = new Validation(_regionDbManager);
             _regionDbManager.EnsureDatabaseCreated();
+            _hotelAdder = new HotelAdder();
         }
 
         [HttpPost]
@@ -61,12 +63,13 @@ namespace HotelAPI.App.Controllers
             var scandicHotels = _parser.SortTextFilesByDate();
             var bestWesternHotels = _parser.SortJsonFilesByDate();
 
-            var scandicTextFile = _parser.SplitStringByLines(scandicHotels[0]);
-
+            var scandic = System.IO.File.ReadAllText(scandicHotels[0]);
+            var western = System.IO.File.ReadAllText(bestWesternHotels[0]);
+            
             var hotels = new List<Hotel>();
 
-            HotelAdder.AddScandicHotelsToHotelList(hotels, scandicTextFile);
-            HotelAdder.AddWesternHotelsToHotelList(hotels, bestWesternHotels);
+            _hotelAdder.AddScandicHotelsToHotelList(hotels, scandic);
+            _hotelAdder.AddWesternHotelsToHotelList(hotels, western);
 
             AddHotelToCorrespondingRegion(regions, hotels);
             return Ok(regions);
@@ -105,8 +108,8 @@ namespace HotelAPI.App.Controllers
 
             var hotels = new List<Hotel>();
 
-            HotelAdder.AddScandicHotelsToHotelList(hotels, scandicTextFile);
-            ReadHotelsFromJson(hotels, bestWesternHotels);
+            _hotelAdder.AddScandicHotelsToHotelList(hotels, scandicTextFile[0]);
+            _hotelAdder.AddWesternHotelsToHotelList(hotels, bestWesternHotels[0]);
 
             foreach (var hotel in hotels)
             {
