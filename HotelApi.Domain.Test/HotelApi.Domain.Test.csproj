@@ -7,13 +7,49 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="BestWestern-2018-05-13.json" />
+    <None Remove="BestWestern-2018-05-14.json" />
+    <None Remove="BestWestern-2018-05-15.json" />
+    <None Remove="scandic-2018-05-13.txt" />
+    <None Remove="scandic-2018-05-14.txt" />
+    <None Remove="scandic-2018-05-15.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="BestWestern-2018-05-13.json" />
+    <Content Include="BestWestern-2018-05-14.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="BestWestern-2018-05-15.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="scandic-2018-05-13.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scandic-2018-05-14.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scandic-2018-05-15.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.2.1" />
     <PackageReference Include="MSTest.TestFramework" Version="1.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HotelAPI.Domain\HotelAPI.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="BestWestern-2018-05-13.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
