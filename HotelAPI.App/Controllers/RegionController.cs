@@ -28,16 +28,6 @@ namespace HotelAPI.App.Controllers
             _appConfiguration = appConfiguration;
         }
 
-        [HttpPost("AddTest")]
-        public IActionResult AddRegionTest(string name, int value)
-        {
-            var region = new Region();
-            region.Name = name;
-            region.Value = value;
-            _regionDbManager.CreateRegion(region);
-            return Ok(region);
-        }
-
         [HttpPost]
         public IActionResult AddRegion(Region region)
         {
@@ -50,31 +40,9 @@ namespace HotelAPI.App.Controllers
             return BadRequest("Fel.");
         }
 
-        [HttpGet("count")]
-        public IActionResult CountRegions()
-        {
-            var count = _regionDbManager.ReturnAllRegions().Count();
-            return Ok(count);
-        }
-
-        [HttpGet("test")]
-        public IActionResult Test()
-        {
-            return Ok("Hejsan");
-        }
-
         [HttpGet]
-        public IActionResult GetAllRegions()
-        {
-            return Ok(_regionDbManager.ReturnAllRegions());
-
-        }
-
-        [HttpGet("{id}")]
-        public void GetRegion(int id)
-        {
-
-        }
+        public IActionResult GetAllRegions() =>
+            Ok(_regionDbManager.ReturnAllRegions());
 
         [HttpDelete("{value}")]
         public IActionResult DeleteRegion(int value)
@@ -83,7 +51,7 @@ namespace HotelAPI.App.Controllers
             if (_validation.RegionExists(value))
             {
                 _regionDbManager.DeleteRegion(value);
-                return Ok();
+                return Ok($"The region with value {value} is successfully removed");
             }
             return NotFound("There is no region with that value");
         }
@@ -94,32 +62,48 @@ namespace HotelAPI.App.Controllers
 
             var regions = _regionDbManager.ReturnAllRegions();
 
-            var scandicHotels = new List<string>();
+            var scandicHotels = SortTextFilesByDate();
+            var bestWesternHotels = SortJsonFilesByDate();
 
-            scandicHotels = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
-            var bestWesternHotel = System.IO.Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
-
-            var scandicTextFile = System.IO.File.ReadAllText($"{scandicHotels[0]}").Split('\n').ToList();
+            var scandicTextFile = SplitStringByLines(scandicHotels[0]);
 
             var hotels = new List<Hotel>();
+
             ReadHotelsFromStringList(hotels, regions, scandicTextFile);
-            LoadJson(regions, bestWesternHotel);
+            var westernHotels = ReadHotelsFromJson(regions, bestWesternHotels);
+
+            AddHotelToCorrespondingRegion(regions, westernHotels);
+            AddHotelToCorrespondingRegion_BasedOnRegion(regions, hotels);
             return Ok(regions);
         }
 
-        private static void LoadJson(List<Region> regions, List<string> listOfWesternHotels)
+        private List<string> SplitStringByLines(String textFile) =>
+            System.IO.File.ReadAllText($"{textFile}").Split('\n').ToList();
+
+        private List<string> SortJsonFilesByDate() =>
+            Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
+
+        private List<string> SortTextFilesByDate() =>
+            Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
+
+
+        private List<Hotel> ReadHotelsFromJson(List<Region> regions, List<string> jsonList)
         {
-            using (StreamReader fi = System.IO.File.OpenText(listOfWesternHotels[0]))
+            using (StreamReader fi = System.IO.File.OpenText(jsonList[0]))
             {
                 var fileContent = fi.ReadToEnd();
 
-                var list = JArray.Parse(fileContent).ToObject<List<Hotel>>();
+                var hotels = JArray.Parse(fileContent).ToObject<List<Hotel>>();
+                return hotels;
+            }
+        }
 
-                foreach (var hotel in list)
-                {
-                    var region = regions.SingleOrDefault(r => r.Value == hotel.RegionValue);
-                    region?.Hotels.Add(hotel);
-                }
+        private static void AddHotelToCorrespondingRegion(List<Region> regions, List<Hotel> hotels)
+        {
+            foreach (var hotel in hotels)
+            {
+                var region = regions.SingleOrDefault(r => r.Value == hotel.RegionValue);
+                region?.Hotels.Add(hotel);
             }
         }
 
@@ -130,17 +114,22 @@ namespace HotelAPI.App.Controllers
                 var hotel = new Hotel();
                 var test = line.Split(',');
 
-                hotel.RegionValue= Convert.ToInt32(test[0]);
+                hotel.RegionValue = Convert.ToInt32(test[0]);
                 hotel.Name = test[1];
                 hotel.Rooms = Convert.ToInt32(test[2]);
                 hotels.Add(hotel);
+            }
+        }
 
-                foreach (var region in regions)
+        private static void AddHotelToCorrespondingRegion_BasedOnRegion(List<Region> regions, List <Hotel> hotels)
+        {
+            foreach (var region in regions)
+            {
+                foreach (var hotel in hotels)
+
+                if (hotel.RegionValue == region.Value)
                 {
-                    if (hotel.RegionValue == region.Value)
-                    {
-                        region.Hotels.Add(hotel);
-                    }
+                    region.Hotels.Add(hotel);
                 }
             }
         }
