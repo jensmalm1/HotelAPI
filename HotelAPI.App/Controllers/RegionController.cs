@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Json;
 using HotelAPI.Data;
 using HotelAPI.Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace HotelAPI.App.Controllers
@@ -69,11 +66,10 @@ namespace HotelAPI.App.Controllers
 
             var hotels = new List<Hotel>();
 
-            ReadHotelsFromStringList(hotels, regions, scandicTextFile);
-            var westernHotels = ReadHotelsFromJson(regions, bestWesternHotels);
+            ReadHotelsFromStringList(hotels, scandicTextFile);
+            ReadHotelsFromJson(hotels, bestWesternHotels);
 
-            AddHotelToCorrespondingRegion(regions, westernHotels);
-            AddHotelToCorrespondingRegion_BasedOnRegion(regions, hotels);
+            AddHotelToCorrespondingRegion(regions, hotels);
             return Ok(regions);
         }
 
@@ -87,14 +83,14 @@ namespace HotelAPI.App.Controllers
             Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
 
 
-        private List<Hotel> ReadHotelsFromJson(List<Region> regions, List<string> jsonList)
+        private void ReadHotelsFromJson(List<Hotel> hotels, List<string> jsonList)
         {
             using (StreamReader fi = System.IO.File.OpenText(jsonList[0]))
             {
                 var fileContent = fi.ReadToEnd();
+                var hotelsFromJson = JArray.Parse(fileContent).ToObject<List<Hotel>>().ToList();
 
-                var hotels = JArray.Parse(fileContent).ToObject<List<Hotel>>();
-                return hotels;
+                hotels.AddRange(hotelsFromJson); 
             }
         }
 
@@ -107,7 +103,7 @@ namespace HotelAPI.App.Controllers
             }
         }
 
-        private static void ReadHotelsFromStringList(List<Hotel> hotels, List<Region> regions, List<string> scandicTextFile)
+        private static void ReadHotelsFromStringList(List<Hotel> hotels, List<string> scandicTextFile)
         {
             foreach (var line in scandicTextFile)
             {
@@ -132,11 +128,6 @@ namespace HotelAPI.App.Controllers
                     region.Hotels.Add(hotel);
                 }
             }
-        }
-
-        private static void ReadHotelsFromJson(string jsonString)
-        {
-            dynamic result = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
         }
 
         [HttpGet("{regionValue:int}")]
