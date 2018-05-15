@@ -17,9 +17,6 @@ namespace HotelAPI.Domain
 
         }
 
-        public List<string> SplitStringByLines(string textFile) =>
-            textFile.Split('\n').ToList();
-
         public List<string> SortJsonFilesByDate() =>
             Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
 
