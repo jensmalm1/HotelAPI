@@ -5,6 +5,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Import\BestWestern-2018-05-15.json" />
+    <None Remove="Import\scandic-2018-05-13.txt" />
+    <None Remove="Import\scandic-2018-05-14.txt" />
+    <None Remove="Import\scandic-2018-05-15.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Import\BestWestern-2018-05-15.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Import\scandic-2018-05-13.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Import\scandic-2018-05-14.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Import\scandic-2018-05-15.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\newtonsoft.json\10.0.1\lib\netstandard1.3\Newtonsoft.Json.dll</HintPath>
     </Reference>

@@ -13,16 +13,16 @@ namespace HotelAPI.App.Controllers
     [Route("api/Region")]
     public class RegionController : Controller
     {
-        private readonly AppConfiguration _appConfiguration;
         private readonly RegionDbManager _regionDbManager;
         private readonly Validation _validation;
+        private readonly Parser _parser;
 
         public RegionController(HotelContext hotelContext, AppConfiguration appConfiguration)
         {
+            _parser = new Parser(appConfiguration);
             _regionDbManager = new RegionDbManager(hotelContext);
             _validation = new Validation(_regionDbManager);
             _regionDbManager.EnsureDatabaseCreated();
-            _appConfiguration = appConfiguration;
         }
 
         [HttpPost]
@@ -56,43 +56,26 @@ namespace HotelAPI.App.Controllers
         [HttpGet("Hotels")]
         public IActionResult GetAllHotels()
         {
-
             var regions = _regionDbManager.ReturnAllRegions();
 
-            var scandicHotels = SortTextFilesByDate();
-            var bestWesternHotels = SortJsonFilesByDate();
+            var scandicHotels = _parser.SortTextFilesByDate();
+            var bestWesternHotels = _parser.SortJsonFilesByDate();
 
-            var scandicTextFile = SplitStringByLines(scandicHotels[0]);
+            var scandicTextFile = _parser.SplitStringByLines(scandicHotels[0]);
 
             var hotels = new List<Hotel>();
 
-            ReadHotelsFromStringList(hotels, scandicTextFile);
-            ReadHotelsFromJson(hotels, bestWesternHotels);
+            HotelAdder.AddScandicHotelsToHotelList(hotels, scandicTextFile);
+            HotelAdder.AddWesternHotelsToHotelList(hotels, bestWesternHotels);
 
             AddHotelToCorrespondingRegion(regions, hotels);
             return Ok(regions);
         }
 
-        private List<string> SplitStringByLines(String textFile) =>
-            System.IO.File.ReadAllText($"{textFile}").Split('\n').ToList();
-
-        private List<string> SortJsonFilesByDate() =>
-            Directory.GetFiles(_appConfiguration.ImportPath, "*.json").OrderByDescending(x => x).ToList();
-
-        private List<string> SortTextFilesByDate() =>
-            Directory.GetFiles(_appConfiguration.ImportPath, "*.txt").OrderByDescending(x => x).ToList();
 
 
-        private void ReadHotelsFromJson(List<Hotel> hotels, List<string> jsonList)
-        {
-            using (StreamReader fi = System.IO.File.OpenText(jsonList[0]))
-            {
-                var fileContent = fi.ReadToEnd();
-                var hotelsFromJson = JArray.Parse(fileContent).ToObject<List<Hotel>>().ToList();
 
-                hotels.AddRange(hotelsFromJson);
-            }
-        }
+
 
         private static void AddHotelToCorrespondingRegion(List<Region> regions, List<Hotel> hotels)
         {
@@ -109,47 +92,20 @@ namespace HotelAPI.App.Controllers
         }
 
 
-        private static void ReadHotelsFromStringList(List<Hotel> hotels, List<string> scandicTextFile)
-        {
-            foreach (var line in scandicTextFile)
-            {
-                var hotel = new Hotel();
-                var test = line.Split(',');
-
-                hotel.RegionValue = Convert.ToInt32(test[0]);
-                hotel.Name = test[1];
-                hotel.Rooms = Convert.ToInt32(test[2]);
-                hotels.Add(hotel);
-            }
-        }
-
-        private static void AddHotelToCorrespondingRegion_BasedOnRegion(List<Region> regions, List<Hotel> hotels)
-        {
-            foreach (var region in regions)
-            {
-                foreach (var hotel in hotels)
-
-                    if (hotel.RegionValue == region.Value)
-                    {
-                        region.Hotels.Add(hotel);
-                    }
-            }
-        }
 
         [HttpGet("{regionValue:int}")]
         public IActionResult GetAllHotelsInRegion(int regionValue)
         {
-
             var regions = _regionDbManager.ReturnAllRegions();
 
-            var scandicHotels = SortTextFilesByDate();
-            var bestWesternHotels = SortJsonFilesByDate();
+            var scandicHotels = _parser.SortTextFilesByDate();
+            var bestWesternHotels = _parser.SortJsonFilesByDate();
 
-            var scandicTextFile = SplitStringByLines(scandicHotels[0]);
+            var scandicTextFile = _parser.SplitStringByLines(scandicHotels[0]);
 
             var hotels = new List<Hotel>();
 
-            ReadHotelsFromStringList(hotels, scandicTextFile);
+            HotelAdder.AddScandicHotelsToHotelList(hotels, scandicTextFile);
             ReadHotelsFromJson(hotels, bestWesternHotels);
 
             foreach (var hotel in hotels)
@@ -202,6 +158,5 @@ namespace HotelAPI.App.Controllers
 
             return regions;
         }
-
     }
 }
