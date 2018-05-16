@@ -11,6 +11,8 @@ namespace HotelAPI.Data
     public class RegionDbManager 
     {
         private readonly HotelContext _context;
+        private readonly Parser _parser;
+        private HotelContext hotelContext;
 
         public RegionDbManager(HotelContext context)
         {
@@ -26,7 +28,6 @@ namespace HotelAPI.Data
 
             catch (Exception)
             {
-
                 return false;
             }
 
@@ -36,7 +37,14 @@ namespace HotelAPI.Data
             }
 
             return true;
+        }
 
+        public bool CheckIfWesternHotelImportedToday()
+        {
+            var today = DateTime.Now.Date;
+            if (_parser.SortJsonFilesByDate()[0].Contains(today.ToString()))
+                return true;
+            return false;
         }
 
         public void CreateRegion(Region region)

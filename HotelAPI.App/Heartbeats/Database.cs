@@ -11,16 +11,23 @@ namespace HotelAPI.Presentation.Heartbeats
     [Route("Check")]
     public class Database:Controller
     {
+        private RegionDbManager _regionDbManager;
 
         public Database(HotelContext hotelContext)
         {
             _regionDbManager = new RegionDbManager(hotelContext);
 
         }
-        private RegionDbManager _regionDbManager;
+
 
         public IActionResult CheckIfDatabaseIsOnline() =>
             _regionDbManager.CheckIfDatabaseIsOnline() ? Ok() : StatusCode(503);
 
+
+        [HttpGet("WesternHotel")]
+        public IActionResult CheckIfWesternHotelsImported()
+        {
+            return _regionDbManager.CheckIfWesternHotelImportedToday() ? Ok() : StatusCode(503);
+        }
     }
 }

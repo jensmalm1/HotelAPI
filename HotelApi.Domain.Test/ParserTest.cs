@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using HotelAPI.Domain;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -21,8 +19,6 @@ namespace HotelApi.Domain.Test
             var expected = "C:\\project\\HotelApi\\HotelApi.Domain.Test\\BestWestern-2018-05-15.json";
 
             Assert.AreEqual(expected, actual);
-
-
         }
     }
 }
