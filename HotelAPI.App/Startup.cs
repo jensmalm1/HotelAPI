@@ -28,6 +28,9 @@ namespace HotelAPI.App
         {
             var appConfiguration = Configuration.GetSection("AppConfiguration").Get<AppConfiguration>();
             services.AddSingleton(appConfiguration);
+
+            services.AddTransient<Parser>();
+
             services.AddMvc();
             services.AddDbContext<HotelContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HotelAPI.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,35 +16,6 @@ namespace HotelAPI.Data
         {
             _context = context;
         }
-
-        public bool CheckIfDatabaseIsOnline()
-        {
-            try
-            {
-                _context.Database.OpenConnection();
-            }
-
-            catch (Exception)
-            {
-                return false;
-            }
-
-            finally
-            {
-                _context.Database.CloseConnection();
-            }
-
-            return true;
-        }
-
-        public bool CheckIfWesternHotelImportedToday()
-        {
-            var today = DateTime.Now.Date;
-            if (_parser.SortJsonFilesByDate()[0].Contains(today.ToString()))
-                return true;
-            return false;
-        }
-
         public void CreateRegion(Region region)
         {
             _context.Add(region);
