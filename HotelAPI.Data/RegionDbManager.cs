@@ -17,6 +17,28 @@ namespace HotelAPI.Data
             _context = context;
         }
 
+        public bool CheckIfDatabaseIsOnline()
+        {
+            try
+            {
+                _context.Database.OpenConnection();
+            }
+
+            catch (Exception)
+            {
+
+                return false;
+            }
+
+            finally
+            {
+                _context.Database.CloseConnection();
+            }
+
+            return true;
+
+        }
+
         public void CreateRegion(Region region)
         {
             _context.Add(region);
