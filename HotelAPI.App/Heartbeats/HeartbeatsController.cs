@@ -26,6 +26,11 @@ namespace HotelAPI.Presentation.Heartbeats
         public IActionResult CheckIfDatabaseIsOnline() =>
             _heartbeatDbManager.CheckIfDatabaseIsOnline() ? Ok() : StatusCode(503);
 
+        [HttpGet("Nothing")]
+        public IActionResult SiteIsOnline()
+        {
+            return Ok("Hemsidan är online");
+        }
 
         [HttpGet("WesternHotel")]
         public IActionResult CheckIfWesternHotelsImported()
@@ -33,10 +38,25 @@ namespace HotelAPI.Presentation.Heartbeats
             return CheckIfWesternHotelImportedToday() ? Ok() : StatusCode(503);
         }
 
+
+        [HttpGet("ScandicHotel")]
+        public IActionResult CheckIfScandicHotelIsImported()
+        {
+            return CheckIfScandicHotelImportedToday() ? Ok() : StatusCode(503);
+        }
+
         public bool CheckIfWesternHotelImportedToday()
         {
             var today = DateTime.Now.Date.ToString("yyyy-MM-dd");
             if (_parser.SortJsonFilesByDate()[0].Contains(today.ToString()))
+                return true;
+            return false;
+        }
+
+        public bool CheckIfScandicHotelImportedToday()
+        {
+            var today = DateTime.Now.Date.ToString("yyyy-MM-dd");
+            if (_parser.SortTextFilesByDate()[0].Contains(today))
                 return true;
             return false;
         }

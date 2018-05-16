@@ -10,6 +10,7 @@
     <None Remove="Import\scandic-2018-05-13.txt" />
     <None Remove="Import\scandic-2018-05-14.txt" />
     <None Remove="Import\scandic-2018-05-15.txt" />
+    <None Remove="Import\scandic-2018-05-16.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +21,9 @@
     <Content Include="Import\BestWestern-2018-05-15.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Import\scandic-2018-05-16.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Import\scandic-2018-05-13.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
