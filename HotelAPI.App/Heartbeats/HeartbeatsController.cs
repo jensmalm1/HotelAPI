@@ -23,6 +23,7 @@ namespace HotelAPI.Presentation.Heartbeats
         }
 
 
+        [HttpGet("Database")]
         public IActionResult CheckIfDatabaseIsOnline() =>
             _heartbeatDbManager.CheckIfDatabaseIsOnline() ? Ok() : StatusCode(503);
 
